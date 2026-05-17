@@ -1,0 +1,139 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0b0f;
+  --panel: #16161d;
+  --line: #2a2a35;
+  --text: #e8e8ec;
+  --muted: #9a9aa6;
+  --accent: #5cdb95;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.4 system-ui, -apple-system, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.content {
+  flex: 1;
+  padding: 16px;
+}
+
+.io,
+.add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.add-row {
+  margin-bottom: 16px;
+}
+
+input {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.search {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 48px;
+}
+
+h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.tabs {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.tabs button {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  padding: 14px;
+}
+
+.tabs button.active {
+  color: var(--accent);
+  box-shadow: inset 0 2px 0 var(--accent);
+}

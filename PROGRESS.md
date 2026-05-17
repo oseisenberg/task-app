@@ -29,30 +29,33 @@ separate from deadline. Reminders are positioned relative to the duration.
 
 ## Data model checklist
 
-- [ ] `id`, `title`, `description`, `subtasks[]` (`{id,title,description,done}`)
-- [ ] Kind: `recurring` vs `oneoff` (same app, separate + combined views)
-- [ ] `startDate` (default today)
-- [ ] `durationLength` (default from settings, ~1 month)
-- [ ] `durationAnchor`: `start` | `end`
-- [ ] `explicitEndDate` (nullable) — if set ⇒ hard deadline
-- [ ] "set duration so start date = today" helper
-- [ ] `noDuration` flag (supported, never default)
-- [ ] `priority` (independent of deadline)
-- [ ] `frequency` (distinct from duration; default = relative to completion)
-- [ ] `reminders[]`: anchor (start/end/evenly-spaced×N), offset (before/after
-      allowed), time granularity (timeOfDay vs explicit hour)
-- [ ] `progressMadeUntil`, `snoozedUntil`, `active`, `archived`,
+- [x] `id`, `title`, `description`, `subtasks[]` (`{id,title,description,done}`)
+- [x] Kind: `recurring` vs `oneoff` (same app, separate + combined views)
+- [x] `startDate` (default today)
+- [x] `duration` (default from settings, ~1 month)
+- [x] `durationAnchor`: `start` | `end`
+- [x] `explicitEndDate` (nullable) — if set ⇒ hard deadline
+- [x] "set duration so start date = today" helper (`durationSoStartIsToday`)
+- [x] `noDuration` flag (supported, never default)
+- [x] `priority` (independent of deadline)
+- [x] `recurrence` (distinct from duration; default basis = completion)
+- [x] `reminders[]`: anchor (start/end/evenly-spaced×N), offset (before/after
+      allowed), time granularity (timeOfDay vs explicit hour) — _type only;
+      scheduling engine is Phase 6_
+- [x] `progressMadeUntil`, `snoozedUntil`, `active`, `archived`,
       `completionHistory[]`
-- [ ] `tags` / `category` for focus filters
-- [ ] `confirmOnComplete` flag
+- [x] `tags` for focus filters
+- [x] `confirmOnComplete` flag
 
 ## Phase tracker
 
-- [ ] **Phase 0 — Scaffold**: Vite + React + TS PWA (manifest, service
-      worker); file-backed store abstraction
-- [ ] **Phase 1 — Duration engine + file format + settings**: duration/anchor
+- [x] **Phase 0 — Scaffold**: Vite + React + TS PWA (manifest, SW,
+      offline shell); JSON store abstraction; two-tab shell; build +
+      typecheck + tests green
+- [x] **Phase 1 — Duration engine + file format + settings**: duration/anchor
       math, soft-vs-hard derivation, no-duration exception, default
-      duration/start settings; JSON schema + parse/serialize
+      duration/start settings; JSON schema + parse/serialize/normalize;
+      8 unit tests for the duration engine
 - [ ] **Phase 2 — Task CRUD + edit menu**: one-off/recurring, recurrence
       (default after completion), subtasks, priority, explicit-end toggle,
       "set duration so start = today", "move to today" button
@@ -87,4 +90,8 @@ separate from deadline. Reminders are positioned relative to the duration.
   app.
 - 2026-05-17: Resolved — file format is single JSON file for now.
 - 2026-05-17: Resolved — no cleanup mode for now; tabs are Focus + Search.
-  All pre-Phase-0 decisions resolved; ready to scaffold on approval.
+- 2026-05-17: Phase 0 + 1 done. PWA scaffold (Vite/React/TS, manifest, SW),
+  duration engine + 8 passing tests, JSON store (load/save/serialize/
+  deserialize/normalize), settings defaults, task factory, two-tab shell
+  with add/list/search/import/export. typecheck + tests + prod build green.
+  Next: Phase 2 (task CRUD + edit menu).
