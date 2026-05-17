@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
   completeTask,
+  markProgress,
   moveToToday,
   patchTask,
+  setSubtasksDone,
   snoozeByDuration,
   snoozeByNewDuration,
   snoozeUntil,
   upsertTask,
 } from "./mutations";
+import { newId } from "./id";
 import { makeTask } from "./task";
 import { emptyData } from "./store";
 import { todayISO } from "./duration";
@@ -72,6 +75,43 @@ describe("snooze", () => {
     d = snoozeUntil(d, t.id, "2026-01-11", "2026-01-01");
     expect(d.tasks[0].duration).toEqual({ amount: 10, unit: "day" });
     expect(d.tasks[0].snoozedUntil).toBe("2026-01-11");
+  });
+});
+
+describe("markProgress", () => {
+  it("hides ~1 week by default", () => {
+    let d = emptyData();
+    const t = makeTask("x", d.settings);
+    d = upsertTask(d, t);
+    d = markProgress(d, t.id, 7, "2026-01-01");
+    expect(d.tasks[0].progressMadeUntil).toBe("2026-01-08");
+  });
+
+  it("never hides past a hard deadline", () => {
+    let d = emptyData();
+    const t = makeTask("x", d.settings);
+    t.startDate = "2026-01-01";
+    t.explicitEndDate = "2026-01-04";
+    d = upsertTask(d, t);
+    d = markProgress(d, t.id, 7, "2026-01-01");
+    expect(d.tasks[0].progressMadeUntil).toBe("2026-01-04");
+  });
+});
+
+describe("setSubtasksDone", () => {
+  it("sets only the listed subtasks done", () => {
+    let d = emptyData();
+    const t = makeTask("x", d.settings);
+    const a = newId();
+    const b = newId();
+    t.subtasks = [
+      { id: a, title: "a", done: false },
+      { id: b, title: "b", done: false },
+    ];
+    d = upsertTask(d, t);
+    d = setSubtasksDone(d, t.id, [a]);
+    expect(d.tasks[0].subtasks.find((s) => s.id === a)!.done).toBe(true);
+    expect(d.tasks[0].subtasks.find((s) => s.id === b)!.done).toBe(false);
   });
 });
 

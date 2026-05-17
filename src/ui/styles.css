@@ -328,3 +328,15 @@ fieldset:disabled {
 .menu :last-child {
   border-bottom: none;
 }
+
+.progress {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 15px;
+  padding: 0 6px;
+}
+
+.progress:hover {
+  color: var(--accent);
+}

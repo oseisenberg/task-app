@@ -1,7 +1,12 @@
 // Pure task mutations. Keeping these out of components makes them testable
 // and keeps the "duration is the fundamental unit" rules in one place.
 
-import { addDuration, daysBetween, todayISO } from "./duration";
+import {
+  addDuration,
+  daysBetween,
+  resolveWindow,
+  todayISO,
+} from "./duration";
 import type { AppData, Duration, Task } from "./types";
 
 function touch(t: Task): Task {
@@ -90,6 +95,49 @@ export function snoozeUntil(
 ): AppData {
   const amount = Math.max(1, daysBetween(today, date));
   return snoozeByNewDuration(data, id, { amount, unit: "day" }, today);
+}
+
+/**
+ * Mark progress: hide the task for a while (default ~1 week) so it stops
+ * cluttering focus — but never past a hard deadline, which is still
+ * respected.
+ */
+export function markProgress(
+  data: AppData,
+  id: string,
+  days = 7,
+  today = todayISO()
+): AppData {
+  return {
+    ...data,
+    tasks: data.tasks.map((t) => {
+      if (t.id !== id) return t;
+      let until = addDuration(today, { amount: days, unit: "day" });
+      const w = resolveWindow(t);
+      if (w?.hardDeadline && w.end < until) until = w.end;
+      return touch({ ...t, progressMadeUntil: until });
+    }),
+  };
+}
+
+/** Persist subtask done-state (used by the completion dialog). */
+export function setSubtasksDone(
+  data: AppData,
+  id: string,
+  doneIds: string[]
+): AppData {
+  const set = new Set(doneIds);
+  return {
+    ...data,
+    tasks: data.tasks.map((t) =>
+      t.id === id
+        ? touch({
+            ...t,
+            subtasks: t.subtasks.map((s) => ({ ...s, done: set.has(s.id) })),
+          })
+        : t
+    ),
+  };
 }
 
 /** Edit-menu action: move a recurring task's window to start today. */

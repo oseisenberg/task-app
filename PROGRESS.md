@@ -72,10 +72,11 @@ separate from deadline. Reminders are positioned relative to the duration.
       snoozeUntil (date → day-duration); SnoozeButton split control with
       caret menu (by duration → 1wk/1mo → custom date); wired into Focus;
       3 tests
-- [ ] **Phase 5 — Completion flow**: completing requires end date;
-      "made progress" hides ~1 week (respects deadline); confirmOnComplete
-      shows description on subtask completion; subtasks never pre-checked in
-      menu; recurring roll-forward off completion date
+- [x] **Phase 5 — Completion flow**: CompletionDialog requires an end date
+      (default today); markProgress hides ~1wk but clamps to a hard
+      deadline; confirmOnComplete shows description on task + subtasks;
+      subtasks shown unchecked in the dialog; recurring roll-forward (P2);
+      4 new tests
 - [ ] **Phase 6 — Reminders/notifications**: duration-relative engine
       (evenly-spaced, start/end-anchored, before/after); Web Push + local
       notifications for focus-mode tasks only; time-of-day vs specific-hour;
@@ -109,4 +110,8 @@ separate from deadline. Reminders are positioned relative to the duration.
   load-more in FocusView. 18 tests green; typecheck + prod build green.
 - 2026-05-17: Phase 4 done. Snooze mutations (by-duration / new-duration /
   until-date) + split-button control wired into Focus. 21 tests green;
-  typecheck + prod build green. Next: Phase 5 (completion flow polish).
+  typecheck + prod build green.
+- 2026-05-17: Phase 5 done. markProgress (deadline-clamped) +
+  setSubtasksDone + CompletionDialog (required end date, confirm shows
+  descriptions, subtasks unchecked); Progress button in Focus. 24 tests
+  green; typecheck + prod build green. Next: Phase 6 (reminders engine).

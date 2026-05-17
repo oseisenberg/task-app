@@ -5,12 +5,15 @@ import { resolveWindow } from "../core/duration";
 import {
   completeTask,
   deleteTask,
+  markProgress,
+  setSubtasksDone,
   snoozeByDuration,
   snoozeByNewDuration,
   snoozeUntil,
   upsertTask,
 } from "../core/mutations";
 import { SnoozeButton } from "./SnoozeButton";
+import { CompletionDialog } from "./CompletionDialog";
 import {
   isAvailable,
   NO_FILTERS,
@@ -33,6 +36,7 @@ const sameFilters = (a: FocusFilters, b: FocusFilters) =>
 export function FocusView({ data, update }: Props) {
   const [title, setTitle] = useState("");
   const [editing, setEditing] = useState<Task | null>(null);
+  const [completing, setCompleting] = useState<Task | null>(null);
   const [filters, setFilters] = useState<FocusFilters>(NO_FILTERS);
 
   // The focus set is a STICKY snapshot: it is chosen once, you work it down,
@@ -169,7 +173,7 @@ export function FocusView({ data, update }: Props) {
                 <button
                   className="check"
                   title="Complete"
-                  onClick={() => update((d) => completeTask(d, task.id))}
+                  onClick={() => setCompleting(task)}
                 >
                   ○
                 </button>
@@ -185,6 +189,13 @@ export function FocusView({ data, update }: Props) {
                     ? ` · by ${w.end}${w.hardDeadline ? " (hard)" : ""}`
                     : " · no duration"}
                 </span>
+                <button
+                  className="progress"
+                  title="Made progress — hide ~1 week"
+                  onClick={() => update((d) => markProgress(d, task.id))}
+                >
+                  ↻
+                </button>
                 <SnoozeButton
                   task={task}
                   onSnoozeDuration={() =>
@@ -203,6 +214,23 @@ export function FocusView({ data, update }: Props) {
             );
           })}
         </ul>
+      )}
+
+      {completing && (
+        <CompletionDialog
+          task={completing}
+          onConfirm={(endDate, doneIds) => {
+            update((d) =>
+              completeTask(
+                setSubtasksDone(d, completing.id, doneIds),
+                completing.id,
+                endDate
+              )
+            );
+            setCompleting(null);
+          }}
+          onCancel={() => setCompleting(null)}
+        />
       )}
 
       {editing && (
