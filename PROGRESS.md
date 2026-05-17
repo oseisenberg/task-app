@@ -87,12 +87,12 @@ separate from deadline. Reminders are positioned relative to the duration.
       tasks" tab; no cleanup mode; archived in own section below not-active;
       active/archived toggles in editor; recurring/one-off/combined
       segmented filter in Search
-- [ ] **Phase 8 — Import/Export polish**: manual re-import + change detection
-      for Claude-cowork round-trip; conflict handling; file-format doc
-- [ ] **Phase 9 — Habit-vs-Task guidance**: document the deciding rule as
-      conceptual guidance only (must-be-done-that-day → belongs in a habit
-      tracker; multi-day window, no penalty → this Task app, e.g.
-      journaling/music vs exercise). No external integration.
+- [x] **Phase 8 — Import/Export polish**: merge-by-id import (partial AI
+      edits) vs replace; defensive normalize; `docs/task-format.md` spec
+      for the AI; 3 store tests
+- [x] **Phase 9 — Habit-vs-Task guidance**: `docs/habit-vs-task.md` —
+      window-test rule, why it matters for the duration model, "move to
+      today" affordance. Conceptual only, no external integration.
 
 ## Notes / log
 
@@ -121,4 +121,8 @@ separate from deadline. Reminders are positioned relative to the duration.
 - 2026-05-17: Phase 6 done. reminders.ts duration-relative engine + 6
   tests, useReminders hook (focus-set-only local notifications), reminder
   editor UI. 30 tests green; typecheck + prod build green.
-  Next: Phase 7 (nav + archive action + recurring/oneoff views).
+- 2026-05-17: Phase 7 done. Active/archived toggles; recurring/one-off/
+  combined filter in Search. 30 tests green.
+- 2026-05-17: Phases 8 + 9 done. Merge-by-id import + task-format spec;
+  habit-vs-task guidance doc. 33 tests green; typecheck + prod build
+  green. ALL PHASES COMPLETE. Still blocked on push (remote 403).

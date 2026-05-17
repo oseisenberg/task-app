@@ -36,6 +36,22 @@ export function deserialize(text: string): AppData {
   return normalize(parsed);
 }
 
+/**
+ * Merge an imported document into the current one by task id: imported
+ * tasks overwrite matching ids, new ids are appended, untouched local
+ * tasks are kept. Settings from the import win. Used for the Claude-cowork
+ * round-trip where the AI may have edited only some tasks.
+ */
+export function merge(current: AppData, incoming: AppData): AppData {
+  const byId = new Map(current.tasks.map((t) => [t.id, t]));
+  for (const t of incoming.tasks) byId.set(t.id, t);
+  return {
+    version: 1,
+    settings: incoming.settings,
+    tasks: [...byId.values()],
+  };
+}
+
 /** Defensive normalization so hand/AI-edited files still load. */
 export function normalize(input: unknown): AppData {
   const obj = (input ?? {}) as Partial<AppData>;
