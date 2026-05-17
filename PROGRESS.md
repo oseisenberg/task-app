@@ -16,8 +16,8 @@ separate from deadline. Reminders are positioned relative to the duration.
 
 ## Decisions / open questions
 
-- [ ] **File format**: Markdown + per-task YAML frontmatter (most AI-editable)
-      vs single JSON file — _pending user decision_
+- [x] **File format**: single **JSON** file (for now). Canonical store the
+      AI reads/edits directly; revisit Markdown later if needed.
 - [x] **Habit app**: purely a *conceptual* distinction — no separate/external
       app to interoperate with. The habit/task rule is documentation only.
       "Move to today" lives **in this app**, on recurring tasks (sets
@@ -52,7 +52,7 @@ separate from deadline. Reminders are positioned relative to the duration.
       worker); file-backed store abstraction
 - [ ] **Phase 1 — Duration engine + file format + settings**: duration/anchor
       math, soft-vs-hard derivation, no-duration exception, default
-      duration/start settings, canonical file format chosen
+      duration/start settings; JSON schema + parse/serialize
 - [ ] **Phase 2 — Task CRUD + edit menu**: one-off/recurring, recurrence
       (default after completion), subtasks, priority, explicit-end toggle,
       "set duration so start = today", "move to today" button
@@ -84,5 +84,6 @@ separate from deadline. Reminders are positioned relative to the duration.
 
 - 2026-05-17: Plan created. Repo was empty (greenfield).
 - 2026-05-17: Resolved — habit/task split is conceptual only, no external
-  app. Still awaiting decisions on file format and cleanup-mode behavior
-  before Phase 0.
+  app.
+- 2026-05-17: Resolved — file format is single JSON file for now. Only
+  cleanup-mode behavior remains open before Phase 0.
