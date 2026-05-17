@@ -18,8 +18,10 @@ separate from deadline. Reminders are positioned relative to the duration.
 
 - [ ] **File format**: Markdown + per-task YAML frontmatter (most AI-editable)
       vs single JSON file — _pending user decision_
-- [ ] **Habit app**: separate existing app to interoperate with, or purely
-      conceptual guidance here? Behavior of "move habit to today" — _pending_
+- [x] **Habit app**: purely a *conceptual* distinction — no separate/external
+      app to interoperate with. The habit/task rule is documentation only.
+      "Move to today" lives **in this app**, on recurring tasks (sets
+      `startDate` = today).
 - [ ] **Cleanup mode**: exact behavior unspecified (assumed: bulk triage of
       stale / overdue tasks) — _pending_
 - [x] Platform: PWA (web app)
@@ -73,11 +75,14 @@ separate from deadline. Reminders are positioned relative to the duration.
       inactive section
 - [ ] **Phase 8 — Import/Export polish**: manual re-import + change detection
       for Claude-cowork round-trip; conflict handling; file-format doc
-- [ ] **Phase 9 — Habit-vs-Task guidance**: document the deciding rule
-      (must-be-done-that-day → Habit app; multi-day window, no penalty →
-      this Task app)
+- [ ] **Phase 9 — Habit-vs-Task guidance**: document the deciding rule as
+      conceptual guidance only (must-be-done-that-day → belongs in a habit
+      tracker; multi-day window, no penalty → this Task app, e.g.
+      journaling/music vs exercise). No external integration.
 
 ## Notes / log
 
-- 2026-05-17: Plan created. Repo was empty (greenfield). Awaiting decisions
-  on file format, habit-app scope, and cleanup-mode behavior before Phase 0.
+- 2026-05-17: Plan created. Repo was empty (greenfield).
+- 2026-05-17: Resolved — habit/task split is conceptual only, no external
+  app. Still awaiting decisions on file format and cleanup-mode behavior
+  before Phase 0.
