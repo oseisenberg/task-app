@@ -12,19 +12,22 @@ interface Props {
 export function SearchView({ data, update }: Props) {
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Task | null>(null);
+  // Recurring and one-off can be viewed separately or combined.
+  const [kind, setKind] = useState<"all" | Task["kind"]>("all");
 
   const { activeNonArchived, inactive, archived } = useMemo(() => {
     const match = (t: Task) =>
-      q.trim() === "" ||
-      t.title.toLowerCase().includes(q.toLowerCase()) ||
-      t.tags.some((tag) => tag.toLowerCase().includes(q.toLowerCase()));
+      (kind === "all" || t.kind === kind) &&
+      (q.trim() === "" ||
+        t.title.toLowerCase().includes(q.toLowerCase()) ||
+        t.tags.some((tag) => tag.toLowerCase().includes(q.toLowerCase())));
     const tasks = data.tasks.filter(match);
     return {
       activeNonArchived: tasks.filter((t) => t.active && !t.archived),
       inactive: tasks.filter((t) => !t.active && !t.archived),
       archived: tasks.filter((t) => t.archived),
     };
-  }, [data.tasks, q]);
+  }, [data.tasks, q, kind]);
 
   const section = (label: string, tasks: Task[]) =>
     tasks.length > 0 && (
@@ -55,6 +58,17 @@ export function SearchView({ data, update }: Props) {
         placeholder="Search to find or edit…"
         onChange={(e) => setQ(e.target.value)}
       />
+      <div className="filters">
+        {(["all", "oneoff", "recurring"] as const).map((k) => (
+          <button
+            key={k}
+            className={kind === k ? "chip on" : "chip"}
+            onClick={() => setKind(k)}
+          >
+            {k === "all" ? "combined" : k}
+          </button>
+        ))}
+      </div>
       {section("Active", activeNonArchived)}
       {section("Not active", inactive)}
       {/* Archived listed in its own section BELOW the not-active section. */}

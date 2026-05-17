@@ -302,6 +302,23 @@ export function TaskEditor({ task, onSave, onDelete, onClose }: Props) {
           Confirm on complete (show description on subtasks too)
         </label>
 
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={t.active}
+            onChange={(e) => set("active", e.target.checked)}
+          />
+          Active
+        </label>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={t.archived}
+            onChange={(e) => set("archived", e.target.checked)}
+          />
+          Archived
+        </label>
+
         <div className="editor-actions">
           {t.kind === "recurring" && (
             <button

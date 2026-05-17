@@ -83,9 +83,10 @@ separate from deadline. Reminders are positioned relative to the duration.
       dueReminders; useReminders fires local notifications for the default
       focus set only; reminder editor UI; birthday & glasses cases tested;
       6 tests _(Web Push when-closed needs a server — out of scope)_
-- [ ] **Phase 7 — Navigation & views**: two tabs (Focus, Search); no "all
-      tasks" tab; no cleanup mode for now; archived habits in own section
-      below the inactive section
+- [x] **Phase 7 — Navigation & views**: two tabs (Focus, Search); no "all
+      tasks" tab; no cleanup mode; archived in own section below not-active;
+      active/archived toggles in editor; recurring/one-off/combined
+      segmented filter in Search
 - [ ] **Phase 8 — Import/Export polish**: manual re-import + change detection
       for Claude-cowork round-trip; conflict handling; file-format doc
 - [ ] **Phase 9 — Habit-vs-Task guidance**: document the deciding rule as
