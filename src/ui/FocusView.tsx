@@ -2,7 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { AppData, Task } from "../core/types";
 import { makeTask } from "../core/task";
 import { resolveWindow } from "../core/duration";
-import { completeTask, deleteTask, upsertTask } from "../core/mutations";
+import {
+  completeTask,
+  deleteTask,
+  snoozeByDuration,
+  snoozeByNewDuration,
+  snoozeUntil,
+  upsertTask,
+} from "../core/mutations";
+import { SnoozeButton } from "./SnoozeButton";
 import {
   isAvailable,
   NO_FILTERS,
@@ -177,6 +185,20 @@ export function FocusView({ data, update }: Props) {
                     ? ` · by ${w.end}${w.hardDeadline ? " (hard)" : ""}`
                     : " · no duration"}
                 </span>
+                <SnoozeButton
+                  task={task}
+                  onSnoozeDuration={() =>
+                    update((d) => snoozeByDuration(d, task.id))
+                  }
+                  onSnoozeStandard={(amount, unit) =>
+                    update((d) =>
+                      snoozeByNewDuration(d, task.id, { amount, unit })
+                    )
+                  }
+                  onSnoozeUntil={(date) =>
+                    update((d) => snoozeUntil(d, task.id, date))
+                  }
+                />
               </li>
             );
           })}

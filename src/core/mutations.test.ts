@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { completeTask, moveToToday, patchTask, upsertTask } from "./mutations";
+import {
+  completeTask,
+  moveToToday,
+  patchTask,
+  snoozeByDuration,
+  snoozeByNewDuration,
+  snoozeUntil,
+  upsertTask,
+} from "./mutations";
 import { makeTask } from "./task";
 import { emptyData } from "./store";
 import { todayISO } from "./duration";
@@ -33,6 +41,37 @@ describe("moveToToday", () => {
     d = upsertTask(d, t);
     d = moveToToday(d, t.id);
     expect(d.tasks[0].startDate).toBe(todayISO());
+  });
+});
+
+describe("snooze", () => {
+  it("snoozeByDuration uses the task's own duration, leaving it unchanged", () => {
+    let d = emptyData();
+    const t = makeTask("mail", d.settings);
+    t.duration = { amount: 1, unit: "week" };
+    d = upsertTask(d, t);
+    d = snoozeByDuration(d, t.id, "2026-01-01");
+    expect(d.tasks[0].snoozedUntil).toBe("2026-01-08");
+    expect(d.tasks[0].duration).toEqual({ amount: 1, unit: "week" });
+  });
+
+  it("snoozeByNewDuration resets the task's duration (default behavior)", () => {
+    let d = emptyData();
+    const t = makeTask("mail", d.settings);
+    t.duration = { amount: 1, unit: "week" };
+    d = upsertTask(d, t);
+    d = snoozeByNewDuration(d, t.id, { amount: 1, unit: "month" }, "2026-01-01");
+    expect(d.tasks[0].duration).toEqual({ amount: 1, unit: "month" });
+    expect(d.tasks[0].snoozedUntil).toBe("2026-02-01");
+  });
+
+  it("snoozeUntil treats a date as a day-duration from today", () => {
+    let d = emptyData();
+    const t = makeTask("x", d.settings);
+    d = upsertTask(d, t);
+    d = snoozeUntil(d, t.id, "2026-01-11", "2026-01-01");
+    expect(d.tasks[0].duration).toEqual({ amount: 10, unit: "day" });
+    expect(d.tasks[0].snoozedUntil).toBe("2026-01-11");
   });
 });
 

@@ -283,3 +283,48 @@ fieldset:disabled {
 .empty button {
   margin-top: 12px;
 }
+
+.split {
+  position: relative;
+  display: flex;
+}
+
+.split-main {
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.split-caret {
+  border-radius: 0 8px 8px 0;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.menu button,
+.menu input {
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.menu :last-child {
+  border-bottom: none;
+}

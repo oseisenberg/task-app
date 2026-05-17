@@ -67,9 +67,11 @@ separate from deadline. Reminders are positioned relative to the duration.
       low-priority mix-in, sticky daily snapshot, combinable filters
       (tags AND / recurring-only / important-only / clear), "load more"
       only once the set is cleared; 6 tests
-- [ ] **Phase 4 — Snooze split-button**: primary = snooze by task duration;
-      caret dropdown = standard periods → custom; off-duration snooze resets
-      duration; "snooze to next by duration" button
+- [x] **Phase 4 — Snooze split-button**: snoozeByDuration (primary, leaves
+      duration unchanged) / snoozeByNewDuration (resets duration) /
+      snoozeUntil (date → day-duration); SnoozeButton split control with
+      caret menu (by duration → 1wk/1mo → custom date); wired into Focus;
+      3 tests
 - [ ] **Phase 5 — Completion flow**: completing requires end date;
       "made progress" hides ~1 week (respects deadline); confirmOnComplete
       shows description on subtask completion; subtasks never pre-checked in
@@ -105,4 +107,6 @@ separate from deadline. Reminders are positioned relative to the duration.
 - 2026-05-17: Phase 3 done. focus.ts scoring/selection with hard-deadline
   urgency, low-priority mix-in, combinable filters; sticky snapshot +
   load-more in FocusView. 18 tests green; typecheck + prod build green.
-  Next: Phase 4 (snooze split-button).
+- 2026-05-17: Phase 4 done. Snooze mutations (by-duration / new-duration /
+  until-date) + split-button control wired into Focus. 21 tests green;
+  typecheck + prod build green. Next: Phase 5 (completion flow polish).
