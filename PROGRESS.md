@@ -56,9 +56,12 @@ separate from deadline. Reminders are positioned relative to the duration.
       math, soft-vs-hard derivation, no-duration exception, default
       duration/start settings; JSON schema + parse/serialize/normalize;
       8 unit tests for the duration engine
-- [ ] **Phase 2 — Task CRUD + edit menu**: one-off/recurring, recurrence
-      (default after completion), subtasks, priority, explicit-end toggle,
-      "set duration so start = today", "move to today" button
+- [x] **Phase 2 — Task CRUD + edit menu**: pure mutations (upsert/delete/
+      patch/moveToToday/completeTask) + 4 tests; TaskEditor modal with
+      kind, duration/anchor/start, noDuration, explicit-end (hard) toggle,
+      "duration so start = today", priority, tags, subtasks,
+      confirmOnComplete, "move to today"; complete from focus; edit from
+      both views
 - [ ] **Phase 3 — Focus mode**: default scoring (priority + deadline urgency;
       steeper for hard deadline), low-priority mix-in, combinable custom
       filters, "load more" only when all focus tasks done
@@ -94,4 +97,7 @@ separate from deadline. Reminders are positioned relative to the duration.
   duration engine + 8 passing tests, JSON store (load/save/serialize/
   deserialize/normalize), settings defaults, task factory, two-tab shell
   with add/list/search/import/export. typecheck + tests + prod build green.
-  Next: Phase 2 (task CRUD + edit menu).
+- 2026-05-17: Phase 2 done. Pure mutations module + tests, full TaskEditor
+  modal wired into Focus + Search, complete action rolls recurring forward
+  from completion date. 12 tests green; typecheck + prod build green.
+  Next: Phase 3 (focus mode algorithm + combinable filters).

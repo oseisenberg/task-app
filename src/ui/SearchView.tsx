@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import type { AppData, Task } from "../core/types";
+import { deleteTask, upsertTask } from "../core/mutations";
+import { TaskEditor } from "./TaskEditor";
 
 interface Props {
   data: AppData;
@@ -7,8 +9,9 @@ interface Props {
 }
 
 // Search is for finding/editing a specific thing — not browsing everything.
-export function SearchView({ data }: Props) {
+export function SearchView({ data, update }: Props) {
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<Task | null>(null);
 
   const { activeNonArchived, inactive, archived } = useMemo(() => {
     const match = (t: Task) =>
@@ -29,8 +32,12 @@ export function SearchView({ data }: Props) {
         <h3>{label}</h3>
         <ul className="task-list">
           {tasks.map((t) => (
-            <li key={t.id} className="task">
-              <span className="title">{t.title}</span>
+            <li
+              key={t.id}
+              className="task"
+              onClick={() => setEditing(t)}
+            >
+              <span className="title grow">{t.title}</span>
               <span className="meta">
                 {t.kind} · P{t.priority}
               </span>
@@ -52,6 +59,21 @@ export function SearchView({ data }: Props) {
       {section("Not active", inactive)}
       {/* Archived listed in its own section BELOW the not-active section. */}
       {section("Archived", archived)}
+
+      {editing && (
+        <TaskEditor
+          task={editing}
+          onSave={(t) => {
+            update((d) => upsertTask(d, t));
+            setEditing(null);
+          }}
+          onDelete={(id) => {
+            update((d) => deleteTask(d, id));
+            setEditing(null);
+          }}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }

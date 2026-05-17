@@ -1,7 +1,13 @@
 import { useState } from "react";
-import type { AppData } from "../core/types";
+import type { AppData, Task } from "../core/types";
 import { makeTask } from "../core/task";
 import { resolveWindow } from "../core/duration";
+import {
+  completeTask,
+  deleteTask,
+  upsertTask,
+} from "../core/mutations";
+import { TaskEditor } from "./TaskEditor";
 
 interface Props {
   data: AppData;
@@ -11,8 +17,15 @@ interface Props {
 // Placeholder selection until Phase 3: active, non-archived, not snoozed /
 // progress-hidden, ordered by priority then soft/hard deadline.
 function focusTasks(data: AppData) {
+  const today = new Date().toISOString().slice(0, 10);
   return data.tasks
-    .filter((t) => t.active && !t.archived)
+    .filter(
+      (t) =>
+        t.active &&
+        !t.archived &&
+        (!t.snoozedUntil || t.snoozedUntil <= today) &&
+        (!t.progressMadeUntil || t.progressMadeUntil <= today)
+    )
     .sort((a, b) => {
       if (b.priority !== a.priority) return b.priority - a.priority;
       const ea = resolveWindow(a)?.end ?? "9999-12-31";
@@ -24,6 +37,7 @@ function focusTasks(data: AppData) {
 
 export function FocusView({ data, update }: Props) {
   const [title, setTitle] = useState("");
+  const [editing, setEditing] = useState<Task | null>(null);
   const shown = focusTasks(data);
 
   const add = () => {
@@ -53,7 +67,19 @@ export function FocusView({ data, update }: Props) {
             const w = resolveWindow(task);
             return (
               <li key={task.id} className="task">
-                <span className="title">{task.title}</span>
+                <button
+                  className="check"
+                  title="Complete"
+                  onClick={() => update((d) => completeTask(d, task.id))}
+                >
+                  ○
+                </button>
+                <span
+                  className="title grow"
+                  onClick={() => setEditing(task)}
+                >
+                  {task.title}
+                </span>
                 <span className="meta">
                   P{task.priority}
                   {w
@@ -64,6 +90,21 @@ export function FocusView({ data, update }: Props) {
             );
           })}
         </ul>
+      )}
+
+      {editing && (
+        <TaskEditor
+          task={editing}
+          onSave={(t) => {
+            update((d) => upsertTask(d, t));
+            setEditing(null);
+          }}
+          onDelete={(id) => {
+            update((d) => deleteTask(d, id));
+            setEditing(null);
+          }}
+          onClose={() => setEditing(null)}
+        />
       )}
     </div>
   );
