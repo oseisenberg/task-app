@@ -22,8 +22,8 @@ separate from deadline. Reminders are positioned relative to the duration.
       app to interoperate with. The habit/task rule is documentation only.
       "Move to today" lives **in this app**, on recurring tasks (sets
       `startDate` = today).
-- [ ] **Cleanup mode**: exact behavior unspecified (assumed: bulk triage of
-      stale / overdue tasks) — _pending_
+- [x] **Cleanup mode**: dropped for now. Tabs are **Focus** and **Search**
+      only.
 - [x] Platform: PWA (web app)
 - [x] Storage: local-first, file-backed
 
@@ -70,9 +70,9 @@ separate from deadline. Reminders are positioned relative to the duration.
       (evenly-spaced, start/end-anchored, before/after); Web Push + local
       notifications for focus-mode tasks only; time-of-day vs specific-hour;
       validate birthday & glasses use cases
-- [ ] **Phase 7 — Navigation & views**: exactly three tabs (Focus, Cleanup,
-      Search); no "all tasks" tab; archived habits in own section below the
-      inactive section
+- [ ] **Phase 7 — Navigation & views**: two tabs (Focus, Search); no "all
+      tasks" tab; no cleanup mode for now; archived habits in own section
+      below the inactive section
 - [ ] **Phase 8 — Import/Export polish**: manual re-import + change detection
       for Claude-cowork round-trip; conflict handling; file-format doc
 - [ ] **Phase 9 — Habit-vs-Task guidance**: document the deciding rule as
@@ -85,5 +85,6 @@ separate from deadline. Reminders are positioned relative to the duration.
 - 2026-05-17: Plan created. Repo was empty (greenfield).
 - 2026-05-17: Resolved — habit/task split is conceptual only, no external
   app.
-- 2026-05-17: Resolved — file format is single JSON file for now. Only
-  cleanup-mode behavior remains open before Phase 0.
+- 2026-05-17: Resolved — file format is single JSON file for now.
+- 2026-05-17: Resolved — no cleanup mode for now; tabs are Focus + Search.
+  All pre-Phase-0 decisions resolved; ready to scaffold on approval.
