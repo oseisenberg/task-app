@@ -77,10 +77,12 @@ separate from deadline. Reminders are positioned relative to the duration.
       deadline; confirmOnComplete shows description on task + subtasks;
       subtasks shown unchecked in the dialog; recurring roll-forward (P2);
       4 new tests
-- [ ] **Phase 6 — Reminders/notifications**: duration-relative engine
-      (evenly-spaced, start/end-anchored, before/after); Web Push + local
-      notifications for focus-mode tasks only; time-of-day vs specific-hour;
-      validate birthday & glasses use cases
+- [x] **Phase 6 — Reminders/notifications**: duration-relative engine
+      (start/end offset incl. negative/after, evenly-spaced×N),
+      time-of-day→hour with explicit-hour override; nextReminder/
+      dueReminders; useReminders fires local notifications for the default
+      focus set only; reminder editor UI; birthday & glasses cases tested;
+      6 tests _(Web Push when-closed needs a server — out of scope)_
 - [ ] **Phase 7 — Navigation & views**: two tabs (Focus, Search); no "all
       tasks" tab; no cleanup mode for now; archived habits in own section
       below the inactive section
@@ -114,4 +116,8 @@ separate from deadline. Reminders are positioned relative to the duration.
 - 2026-05-17: Phase 5 done. markProgress (deadline-clamped) +
   setSubtasksDone + CompletionDialog (required end date, confirm shows
   descriptions, subtasks unchecked); Progress button in Focus. 24 tests
-  green; typecheck + prod build green. Next: Phase 6 (reminders engine).
+  green; typecheck + prod build green.
+- 2026-05-17: Phase 6 done. reminders.ts duration-relative engine + 6
+  tests, useReminders hook (focus-set-only local notifications), reminder
+  editor UI. 30 tests green; typecheck + prod build green.
+  Next: Phase 7 (nav + archive action + recurring/oneoff views).

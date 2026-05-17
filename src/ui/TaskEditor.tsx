@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Duration, Task } from "../core/types";
+import type { Duration, Reminder, Task, TimeOfDay } from "../core/types";
 import { durationSoStartIsToday, todayISO } from "../core/duration";
 import { newId } from "../core/id";
 
@@ -11,6 +11,7 @@ interface Props {
 }
 
 const UNITS: Duration["unit"][] = ["day", "week", "month", "year"];
+const TIMES: TimeOfDay[] = ["morning", "afternoon", "evening", "anytime"];
 
 export function TaskEditor({ task, onSave, onDelete, onClose }: Props) {
   const [t, setT] = useState<Task>(task);
@@ -167,6 +168,91 @@ export function TaskEditor({ task, onSave, onDelete, onClose }: Props) {
               )
             }
           />
+        </div>
+
+        {/* Reminders are relative to the duration, not absolute dates. */}
+        <div className="subtasks">
+          <label>Reminders</label>
+          {t.reminders.map((r, i) => {
+            const patchR = (p: Partial<Reminder>) => {
+              const rs = [...t.reminders];
+              rs[i] = { ...r, ...p };
+              set("reminders", rs);
+            };
+            return (
+              <div className="field" key={r.id}>
+                <select
+                  value={r.anchor}
+                  onChange={(e) =>
+                    patchR({ anchor: e.target.value as Reminder["anchor"] })
+                  }
+                >
+                  <option value="start">from start</option>
+                  <option value="end">from end</option>
+                  <option value="evenly-spaced">evenly spaced</option>
+                </select>
+                {r.anchor === "evenly-spaced" ? (
+                  <input
+                    type="number"
+                    min={1}
+                    value={r.count ?? 3}
+                    title="count"
+                    onChange={(e) =>
+                      patchR({ count: Number(e.target.value) })
+                    }
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    value={r.offsetDays ?? 0}
+                    title="offset days (negative = before)"
+                    onChange={(e) =>
+                      patchR({ offsetDays: Number(e.target.value) })
+                    }
+                  />
+                )}
+                <select
+                  value={r.timeOfDay}
+                  onChange={(e) =>
+                    patchR({ timeOfDay: e.target.value as TimeOfDay })
+                  }
+                >
+                  {TIMES.map((x) => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() =>
+                    set(
+                      "reminders",
+                      t.reminders.filter((x) => x.id !== r.id)
+                    )
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() =>
+              set("reminders", [
+                ...t.reminders,
+                {
+                  id: newId(),
+                  anchor: "start",
+                  offsetDays: 0,
+                  timeOfDay: "morning",
+                },
+              ])
+            }
+          >
+            + Reminder
+          </button>
         </div>
 
         <div className="subtasks">
