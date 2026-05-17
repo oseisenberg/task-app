@@ -62,9 +62,11 @@ separate from deadline. Reminders are positioned relative to the duration.
       "duration so start = today", priority, tags, subtasks,
       confirmOnComplete, "move to today"; complete from focus; edit from
       both views
-- [ ] **Phase 3 — Focus mode**: default scoring (priority + deadline urgency;
-      steeper for hard deadline), low-priority mix-in, combinable custom
-      filters, "load more" only when all focus tasks done
+- [x] **Phase 3 — Focus mode**: scoring (priority + deadline urgency,
+      steeper/longer-horizon for hard deadlines, overdue boost),
+      low-priority mix-in, sticky daily snapshot, combinable filters
+      (tags AND / recurring-only / important-only / clear), "load more"
+      only once the set is cleared; 6 tests
 - [ ] **Phase 4 — Snooze split-button**: primary = snooze by task duration;
       caret dropdown = standard periods → custom; off-duration snooze resets
       duration; "snooze to next by duration" button
@@ -100,4 +102,7 @@ separate from deadline. Reminders are positioned relative to the duration.
 - 2026-05-17: Phase 2 done. Pure mutations module + tests, full TaskEditor
   modal wired into Focus + Search, complete action rolls recurring forward
   from completion date. 12 tests green; typecheck + prod build green.
-  Next: Phase 3 (focus mode algorithm + combinable filters).
+- 2026-05-17: Phase 3 done. focus.ts scoring/selection with hard-deadline
+  urgency, low-priority mix-in, combinable filters; sticky snapshot +
+  load-more in FocusView. 18 tests green; typecheck + prod build green.
+  Next: Phase 4 (snooze split-button).

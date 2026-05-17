@@ -260,3 +260,26 @@ fieldset:disabled {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.chip.on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.empty button {
+  margin-top: 12px;
+}

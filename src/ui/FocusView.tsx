@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { AppData, Task } from "../core/types";
 import { makeTask } from "../core/task";
 import { resolveWindow } from "../core/duration";
+import { completeTask, deleteTask, upsertTask } from "../core/mutations";
 import {
-  completeTask,
-  deleteTask,
-  upsertTask,
-} from "../core/mutations";
+  isAvailable,
+  NO_FILTERS,
+  selectFocus,
+  type FocusFilters,
+} from "../core/focus";
+import { todayISO } from "../core/duration";
 import { TaskEditor } from "./TaskEditor";
 
 interface Props {
@@ -14,31 +17,57 @@ interface Props {
   update: (fn: (d: AppData) => AppData) => void;
 }
 
-// Placeholder selection until Phase 3: active, non-archived, not snoozed /
-// progress-hidden, ordered by priority then soft/hard deadline.
-function focusTasks(data: AppData) {
-  const today = new Date().toISOString().slice(0, 10);
-  return data.tasks
-    .filter(
-      (t) =>
-        t.active &&
-        !t.archived &&
-        (!t.snoozedUntil || t.snoozedUntil <= today) &&
-        (!t.progressMadeUntil || t.progressMadeUntil <= today)
-    )
-    .sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      const ea = resolveWindow(a)?.end ?? "9999-12-31";
-      const eb = resolveWindow(b)?.end ?? "9999-12-31";
-      return ea.localeCompare(eb);
-    })
-    .slice(0, data.settings.focusTargetCount);
-}
+const sameFilters = (a: FocusFilters, b: FocusFilters) =>
+  a.minPriority === b.minPriority &&
+  a.kinds.join() === b.kinds.join() &&
+  a.tags.slice().sort().join() === b.tags.slice().sort().join();
 
 export function FocusView({ data, update }: Props) {
   const [title, setTitle] = useState("");
   const [editing, setEditing] = useState<Task | null>(null);
-  const shown = focusTasks(data);
+  const [filters, setFilters] = useState<FocusFilters>(NO_FILTERS);
+
+  // The focus set is a STICKY snapshot: it is chosen once, you work it down,
+  // and "Load more" is only offered once it is empty (not by default).
+  const [focusIds, setFocusIds] = useState<string[]>([]);
+  const lastFilters = useRef<FocusFilters | null>(null);
+
+  // Load more: append the next-best batch of tasks not already in the set.
+  const loadMore = () => {
+    const next = selectFocus(
+      { ...data, tasks: data.tasks.filter((t) => !focusIds.includes(t.id)) },
+      filters
+    ).map((t) => t.id);
+    setFocusIds((prev) => [...prev, ...next]);
+  };
+
+  // Re-pick the snapshot when filters change.
+  useEffect(() => {
+    if (!lastFilters.current || !sameFilters(lastFilters.current, filters)) {
+      lastFilters.current = filters;
+      setFocusIds(selectFocus(data, filters).map((t) => t.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, data.tasks.length]);
+
+  const allTags = useMemo(
+    () => [...new Set(data.tasks.flatMap((t) => t.tags))].sort(),
+    [data.tasks]
+  );
+
+  const today = todayISO();
+  const byId = useMemo(
+    () => new Map(data.tasks.map((t) => [t.id, t])),
+    [data.tasks]
+  );
+
+  const shown = focusIds
+    .map((id) => byId.get(id))
+    .filter((t): t is Task => !!t && isAvailable(t, today));
+
+  const overflow = data.tasks.filter(
+    (t) => isAvailable(t, today) && !focusIds.includes(t.id)
+  ).length;
 
   const add = () => {
     const t = title.trim();
@@ -46,6 +75,19 @@ export function FocusView({ data, update }: Props) {
     update((d) => ({ ...d, tasks: [...d.tasks, makeTask(t, d.settings)] }));
     setTitle("");
   };
+
+  const toggleTag = (tag: string) =>
+    setFilters((f) => ({
+      ...f,
+      tags: f.tags.includes(tag)
+        ? f.tags.filter((x) => x !== tag)
+        : [...f.tags, tag],
+    }));
+
+  const filtersActive =
+    filters.tags.length > 0 ||
+    filters.kinds.length > 0 ||
+    filters.minPriority > 1;
 
   return (
     <div className="view">
@@ -59,8 +101,57 @@ export function FocusView({ data, update }: Props) {
         <button onClick={add}>Add</button>
       </div>
 
+      {/* Combinable custom filters on the same focus view. */}
+      <div className="filters">
+        {allTags.map((tag) => (
+          <button
+            key={tag}
+            className={filters.tags.includes(tag) ? "chip on" : "chip"}
+            onClick={() => toggleTag(tag)}
+          >
+            #{tag}
+          </button>
+        ))}
+        <button
+          className={filters.kinds.length ? "chip on" : "chip"}
+          onClick={() =>
+            setFilters((f) => ({
+              ...f,
+              kinds: f.kinds.length ? [] : ["recurring"],
+            }))
+          }
+        >
+          recurring only
+        </button>
+        <button
+          className={filters.minPriority > 1 ? "chip on" : "chip"}
+          onClick={() =>
+            setFilters((f) => ({
+              ...f,
+              minPriority: f.minPriority > 1 ? 1 : 4,
+            }))
+          }
+        >
+          important only
+        </button>
+        {filtersActive && (
+          <button className="chip" onClick={() => setFilters(NO_FILTERS)}>
+            clear
+          </button>
+        )}
+      </div>
+
       {shown.length === 0 ? (
-        <p className="empty">Nothing in focus. Add a task to get started.</p>
+        <div className="empty">
+          {overflow > 0 ? (
+            <>
+              <p>All focus tasks done. {overflow} more available.</p>
+              <button onClick={loadMore}>Load more</button>
+            </>
+          ) : (
+            <p>Nothing to focus on. Add a task to get started.</p>
+          )}
+        </div>
       ) : (
         <ul className="task-list">
           {shown.map((task) => {
